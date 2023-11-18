@@ -19,13 +19,17 @@ class CentralWidget(QWidget):
         self.splice_dir = None
         # self.output_dir = None
         self.output_dir = "./output"
-        self.isSelectingSpliceFolder = False
+        self.progress_bar = None
+        self.reset_button = None
 
+        self.auto_find_splice_folder()
+        self.init_ui()
+
+
+    def auto_find_splice_folder(self):
         splice_path = Path(Path.home()).joinpath("Splice")
         if splice_path.exists():
             self.splice_dir = splice_path
-
-        self.init_ui()
 
 
     def init_ui(self):
@@ -47,7 +51,6 @@ class CentralWidget(QWidget):
             splice_select_button.clicked.connect(partial(self.select_folder, True))
             first_row.addWidget(splice_select_button)
 
-
         # SECOND ROW
         second_row = QHBoxLayout()
         second_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -60,7 +63,6 @@ class CentralWidget(QWidget):
         output_select_button.clicked.connect(partial(self.select_folder, False))
         second_row.addWidget(output_select_button)
 
-
         # THIRD ROW
         third_row = QHBoxLayout()
         third_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -70,7 +72,6 @@ class CentralWidget(QWidget):
         submit_button.clicked.connect(self.submit)
         third_row.addWidget(submit_button)
 
-
         # FOURTH ROW
         fourth_row = QHBoxLayout()
         fourth_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -79,6 +80,16 @@ class CentralWidget(QWidget):
         self.progress_bar = QProgressBar()
         self.progress_bar.setMaximumWidth(200)
         fourth_row.addWidget(self.progress_bar)
+
+        # FIFTH ROW
+        fifth_row = QHBoxLayout()
+        fifth_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        vertical_layout.addLayout(fifth_row)
+
+        self.reset_button = QPushButton("Reset")
+        self.reset_button.clicked.connect(self.reset)
+        self.reset_button.hide()
+        fifth_row.addWidget(self.reset_button)
 
 
     def select_folder(self, is_splice_dir):
@@ -138,6 +149,7 @@ class CentralWidget(QWidget):
         if not valid_file_paths:
             print("No files needed to be copied.")
             self.progress_bar.setValue(100)
+            self.reset_button.show()
             return
 
         # Copy each valid file and update the progress bar
@@ -153,3 +165,15 @@ class CentralWidget(QWidget):
             self.progress_bar.setValue(percent_complete)
 
         print("Done copying!")
+        self.reset_button.show()
+
+
+    def reset(self):
+        print("Resetting!")
+        
+        self.splice_dir = None
+        self.output_dir = None
+        self.progress_bar.setValue(0)
+
+        self.auto_find_splice_folder()
+        self.reset_button.hide()
