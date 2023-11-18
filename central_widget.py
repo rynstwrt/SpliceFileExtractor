@@ -10,8 +10,8 @@ from os import walk
 from os.path import join, basename
 
 
-FONT_1_PATH = "./fonts/NotoSansGlagolitic-Regular.ttf"
-FONT_1_SIZE = 16
+FONT_1_PATH = "assets/fonts/NotoSansGlagolitic-Regular.ttf"
+FONT_1_SIZE = 20
 INPUT_SECTION_WIDTH = 600
 
 
