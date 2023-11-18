@@ -1,6 +1,7 @@
 $background: #171717;
-$dim: #9b9b9b;
+$dim: #afafaf;
 $dimmer: #5a5a5a;
+$accent: #ffb971;
 
 
 QMainWindow
@@ -9,14 +10,25 @@ QMainWindow
 }
 
 
-.directory-path
+.directory-label
 {
-    margin-bottom: 15px;
+    margin-left: 3px;
     color: $dimmer;
 }
 
 
-.auto-detect
+.auto-detected
 {
-    color: $dim;
+    color: $accent;
+}
+
+
+.submit-button
+{
+    background-color: $accent;
+    border-radius: 5px;
+    padding: 5px 15px;
+    color: black;
+    margin-top: 7px;
+    //max-width: 60px;
 }

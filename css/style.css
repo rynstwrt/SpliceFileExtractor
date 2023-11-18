@@ -2,13 +2,21 @@ QMainWindow {
   background-color: #171717;
 }
 
-.directory-path {
-  margin-bottom: 15px;
+.directory-label {
+  margin-left: 3px;
   color: #5a5a5a;
 }
 
-.auto-detect {
-  color: #9b9b9b;
+.auto-detected {
+  color: #ffb971;
+}
+
+.submit-button {
+  background-color: #ffb971;
+  border-radius: 5px;
+  padding: 5px 15px;
+  color: black;
+  margin-top: 7px;
 }
 
 /*# sourceMappingURL=style.css.map */

@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
-                             QLabel, QProgressBar, QFileDialog, QMessageBox)
+                             QLabel, QProgressBar, QFileDialog, QMessageBox,
+                             QSizePolicy, QLayout)
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QFontDatabase
 from functools import partial
@@ -11,6 +12,7 @@ from os.path import join, basename
 
 FONT_1_PATH = "./fonts/NotoSansGlagolitic-Regular.ttf"
 FONT_1_SIZE = 16
+INPUT_SECTION_WIDTH = 600
 
 
 class CentralWidget(QWidget):
@@ -22,8 +24,10 @@ class CentralWidget(QWidget):
         # self.output_dir = None
         self.output_dir = "./output"
 
-        self.splice_chosen_row_label = None
-        self.output_chosen_row_label = None
+        self.splice_select_button = None
+        self.output_select_button = None
+        self.splice_directory_label = None
+        self.output_directory_label = None
         self.progress_bar = None
         self.submit_button = None
 
@@ -56,63 +60,69 @@ class CentralWidget(QWidget):
         vertical_layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(vertical_layout)
 
-        # Splice input row
-        splice_row = QHBoxLayout()
-        splice_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        vertical_layout.addLayout(splice_row)
-
-        splice_row_label_text = "[Splice folder automatically found at " + str(self.splice_dir) + "!]" if self.splice_dir else "Select the location of your Splice folder: "
-        splice_row_label = QLabel(splice_row_label_text)
-        splice_row.addWidget(splice_row_label)
+        # Splice input section
+        splice_section = QVBoxLayout()
+        splice_section.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        vertical_layout.addLayout(splice_section)
 
         if self.splice_dir:
-            splice_row_label.setProperty("class", "auto-detect")
-            splice_row_label.setContentsMargins(0, 0, 0, 20)
+            splice_auto_detected_label = QLabel("[Splice folder automatically found at {}!]".format(self.splice_dir))
+            splice_auto_detected_label.setProperty("class", "auto-detected")
+            splice_auto_detected_label.setContentsMargins(0, 0, 0, 5)
+            splice_section.addWidget(splice_auto_detected_label)
 
-        if not self.splice_dir:
-            splice_select_button = QPushButton("Select")
-            splice_select_button.clicked.connect(partial(self.select_folder, True))
-            splice_row.addWidget(splice_select_button)
+        splice_label = QLabel("Select the location of your Splice folder: ")
+        splice_label.setMinimumWidth(INPUT_SECTION_WIDTH)
+        splice_section.addWidget(splice_label)
 
-            # Splice chosen row
-            splice_chosen_row = QHBoxLayout()
-            splice_chosen_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            vertical_layout.addLayout(splice_chosen_row)
+        splice_input_row = QHBoxLayout()
+        splice_section.addLayout(splice_input_row)
 
-            self.splice_chosen_row_label = QLabel("[None Selected]")
-            self.splice_chosen_row_label.setProperty("class", "directory-path")
-            self.splice_chosen_row_label.setContentsMargins(0, 0, 0, 10)
-            splice_chosen_row.addWidget(self.splice_chosen_row_label)
+        self.splice_select_button = QPushButton("Select")
+        splice_input_row.addWidget(self.splice_select_button)
+        self.splice_select_button.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
+        self.splice_select_button.clicked.connect(partial(self.select_folder, True))
 
-        # Output input row
-        output_row = QHBoxLayout()
-        output_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        vertical_layout.addLayout(output_row)
+        self.splice_directory_label = QLabel(str(self.splice_dir) if self.splice_dir else "[None selected]")
+        self.splice_directory_label.setProperty("class", "directory-label")
+        splice_input_row.addWidget(self.splice_directory_label)
 
-        output_row_label = QLabel("Select the desired output location: ")
-        output_row.addWidget(output_row_label)
+        if self.splice_dir:
+            splice_label.setEnabled(False)
+            self.splice_select_button.setEnabled(False)
+            self.splice_directory_label.setEnabled(False)
+
+        # Output input section
+        output_section = QVBoxLayout()
+        vertical_layout.addLayout(output_section)
+        output_section.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+
+        output_label = QLabel("Select the desired output folder: ")
+        output_label.setMinimumWidth(INPUT_SECTION_WIDTH)
+        output_label.setContentsMargins(0, 20, 0, 0)
+        output_section.addWidget(output_label)
+
+        output_input_row = QHBoxLayout()
+        # output_input_row.setAlignment(Qt.AlignmentFlag.AlignBottom)
+        output_section.addLayout(output_input_row)
 
         self.output_select_button = QPushButton("Select")
+        self.output_select_button.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         self.output_select_button.clicked.connect(partial(self.select_folder, False))
-        output_row.addWidget(self.output_select_button)
+        output_input_row.addWidget(self.output_select_button)
 
-        # Output chosen row
-        output_chosen_row = QHBoxLayout()
-        output_chosen_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        vertical_layout.addLayout(output_chosen_row)
-
-        self.output_chosen_row_label = QLabel("[None Selected]")
-        self.output_chosen_row_label.setProperty("class", "directory-path")
-        output_chosen_row.addWidget(self.output_chosen_row_label)
+        self.output_directory_label = QLabel(str(self.output_dir) if self.output_dir else "[None selected]")
+        self.output_directory_label.setProperty("class", "directory-label")
+        output_input_row.addWidget(self.output_directory_label)
 
         # Progress bar row
         progress_bar_row = QHBoxLayout()
         progress_bar_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        progress_bar_row.setContentsMargins(0, 15, 0, 0)
+        progress_bar_row.setContentsMargins(0, 40, 0, 0)
         vertical_layout.addLayout(progress_bar_row)
 
         self.progress_bar = QProgressBar()
-        self.progress_bar.setMaximumWidth(200)
+        self.progress_bar.setMaximumWidth(INPUT_SECTION_WIDTH)
         progress_bar_row.addWidget(self.progress_bar)
 
         # Submit row
@@ -121,6 +131,7 @@ class CentralWidget(QWidget):
         vertical_layout.addLayout(submit_row)
 
         self.submit_button = QPushButton("Submit")
+        self.submit_button.setProperty("class", "submit-button")
         self.submit_button.clicked.connect(self.submit)
         submit_row.addWidget(self.submit_button)
 
@@ -131,19 +142,19 @@ class CentralWidget(QWidget):
 
         if not directory:
             if is_splice_dir:
-                self.splice_chosen_row_label.setText("[None Selected]")
+                self.splice_directory_label.setText("[None Selected]")
                 self.splice_dir = None
             else:
-                self.output_chosen_row_label.setText("[None Selected]")
+                self.output_directory_label.setText("[None Selected]")
                 self.output_dir = None
             return
 
         if is_splice_dir:
             self.splice_dir = directory
-            self.splice_chosen_row_label.setText(self.splice_dir)
+            self.splice_directory_label.setText(self.splice_dir)
         else:
             self.output_dir = directory
-            self.output_chosen_row_label.setText(self.output_dir)
+            self.output_directory_label.setText(self.output_dir)
 
         dir_type = "Splice" if is_splice_dir else "output"
         print("Selected {} as the {} directory.".format(directory, dir_type))
@@ -155,6 +166,7 @@ class CentralWidget(QWidget):
 
             self.progress_bar.setValue(0)
             self.has_run = False
+            self.splice_select_button.setDisabled(False)
             self.output_select_button.setDisabled(False)
             self.submit_button.setText("Submit")
         else:
@@ -202,6 +214,7 @@ class CentralWidget(QWidget):
             self.has_run = True
             self.progress_bar.setValue(100)
             self.submit_button.setText("Reset")
+            self.splice_select_button.setDisabled(True)
             self.output_select_button.setDisabled(True)
             QMessageBox.information(self, "Files Exist", "All files already exist.")
             return
@@ -221,5 +234,6 @@ class CentralWidget(QWidget):
         print("Done copying!")
         self.has_run = True
         self.submit_button.setText("Reset")
+        self.splice_select_button.setDisabled(True)
         self.output_select_button.setDisabled(True)
         QMessageBox.information(self, "Complete", "Copying complete!")

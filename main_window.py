@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QMainWindow
 from central_widget import CentralWidget
 
 
-DEFAULT_WINDOW_SIZE = (500, 300)
+DEFAULT_WINDOW_SIZE = (700, 300)
 
 
 class MainWindow(QMainWindow):
