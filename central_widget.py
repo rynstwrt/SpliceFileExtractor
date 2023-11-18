@@ -112,9 +112,8 @@ class CentralWidget(QWidget):
 
 
     def copy_files(self):
-        valid_files_paths = []
-
         # Find all files without certain extensions.
+        valid_extension_file_paths = []
         for path, subdirs, files in walk(self.splice_dir):
             for file_name in files:
                 is_banned = False
@@ -127,15 +126,24 @@ class CentralWidget(QWidget):
                 if is_banned:
                     continue
 
-                valid_files_paths.append(join(path, file_name))
+                valid_extension_file_paths.append(join(path, file_name))
 
-        # TODO: Remove files that are already in the output folder
+        # Remove files that are already in the output folder
+        valid_file_paths = []
+        for file_path in valid_extension_file_paths:
+            output_path = join(self.output_dir, basename(file_path))
+            if not Path(output_path).exists():
+                valid_file_paths.append(file_path)
 
+        if not valid_file_paths:
+            print("No files needed to be copied.")
+            self.progress_bar.setValue(100)
+            return
 
         # Copy each valid file and update the progress bar
-        num_valid_files = len(valid_files_paths)
+        num_valid_files = len(valid_file_paths)
         file_index = 0
-        for file_path in valid_files_paths:
+        for file_path in valid_file_paths:
             print("Copying " + file_path)
             copy(file_path, join(self.output_dir, basename(file_path)))
 
@@ -143,3 +151,5 @@ class CentralWidget(QWidget):
 
             percent_complete = int(file_index / num_valid_files * 100)
             self.progress_bar.setValue(percent_complete)
+
+        print("Done copying!")
