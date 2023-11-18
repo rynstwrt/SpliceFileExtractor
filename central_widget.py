@@ -10,7 +10,7 @@ from os.path import join, basename
 
 
 FONT_1_PATH = "./fonts/NotoSansGlagolitic-Regular.ttf"
-FONT_1_SIZE = 13
+FONT_1_SIZE = 16
 
 
 class CentralWidget(QWidget):
@@ -63,9 +63,11 @@ class CentralWidget(QWidget):
 
         splice_row_label_text = "Splice folder automatically found at " + str(self.splice_dir) + "!" if self.splice_dir else "Select the location of your Splice folder: "
         splice_row_label = QLabel(splice_row_label_text)
-        if self.splice_dir:
-            splice_row_label.setProperty("class", "directory-path")
         splice_row.addWidget(splice_row_label)
+
+        if self.splice_dir:
+            splice_row_label.setProperty("class", "auto-detect")
+            splice_row_label.setContentsMargins(0, 0, 0, 20)
 
         if not self.splice_dir:
             splice_select_button = QPushButton("Select")
@@ -105,7 +107,7 @@ class CentralWidget(QWidget):
         # Progress bar row
         progress_bar_row = QHBoxLayout()
         progress_bar_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        progress_bar_row.setContentsMargins(0, 10, 0, 0)
+        progress_bar_row.setContentsMargins(0, 15, 0, 0)
         vertical_layout.addLayout(progress_bar_row)
 
         self.progress_bar = QProgressBar()
@@ -141,12 +143,8 @@ class CentralWidget(QWidget):
         if self.has_run:
             print("Resetting!")
 
-            self.splice_dir = None
-            self.output_dir = None
             self.progress_bar.setValue(0)
-
             self.has_run = False
-            self.auto_find_splice_folder()
             self.submit_button.setText("Submit")
         else:
             if not self.splice_dir or not self.output_dir:

@@ -3,8 +3,12 @@ QMainWindow {
 }
 
 .directory-path {
-  color: gray;
   margin-bottom: 15px;
+  color: #5a5a5a;
+}
+
+.auto-detect {
+  color: #9b9b9b;
 }
 
 /*# sourceMappingURL=style.css.map */
