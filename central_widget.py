@@ -1,9 +1,8 @@
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
-                             QLabel, QProgressBar, QFileDialog, QDialog)
+                             QLabel, QProgressBar, QFileDialog, QMessageBox)
 from PyQt6.QtCore import Qt
 from functools import partial
 from pathlib import Path
-from warning_dialog import WarningDialog
 from shutil import copy
 from os import walk
 from os.path import join, basename
@@ -34,7 +33,7 @@ class CentralWidget(QWidget):
 
     def init_ui(self):
         vertical_layout = QVBoxLayout()
-        vertical_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        vertical_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.setLayout(vertical_layout)
 
         # FIRST ROW
@@ -115,8 +114,7 @@ class CentralWidget(QWidget):
             else:
                 dialog_text += "output directory."
 
-            dialog = WarningDialog("Error: No folder chosen", dialog_text)
-            dialog.exec()
+            QMessageBox.critical(self, "Error: No folder chosen", dialog_text, buttons=QMessageBox.StandardButton.Ok)
             return
 
         self.copy_files()
@@ -170,7 +168,7 @@ class CentralWidget(QWidget):
 
     def reset(self):
         print("Resetting!")
-        
+
         self.splice_dir = None
         self.output_dir = None
         self.progress_bar.setValue(0)
