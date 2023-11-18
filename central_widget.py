@@ -30,7 +30,7 @@ class CentralWidget(QWidget):
         self.has_run = False
         self.font1 = None
 
-        # self.auto_find_splice_folder()
+        self.auto_find_splice_folder()
         self.load_fonts()
         self.init_ui()
 
@@ -61,7 +61,7 @@ class CentralWidget(QWidget):
         splice_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
         vertical_layout.addLayout(splice_row)
 
-        splice_row_label_text = "Splice folder automatically found at " + str(self.splice_dir) + "!" if self.splice_dir else "Select the location of your Splice folder: "
+        splice_row_label_text = "[Splice folder automatically found at " + str(self.splice_dir) + "!]" if self.splice_dir else "Select the location of your Splice folder: "
         splice_row_label = QLabel(splice_row_label_text)
         splice_row.addWidget(splice_row_label)
 
@@ -79,8 +79,9 @@ class CentralWidget(QWidget):
             splice_chosen_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
             vertical_layout.addLayout(splice_chosen_row)
 
-            self.splice_chosen_row_label = QLabel("---")
+            self.splice_chosen_row_label = QLabel("[None Selected]")
             self.splice_chosen_row_label.setProperty("class", "directory-path")
+            self.splice_chosen_row_label.setContentsMargins(0, 0, 0, 10)
             splice_chosen_row.addWidget(self.splice_chosen_row_label)
 
         # Output input row
@@ -91,16 +92,16 @@ class CentralWidget(QWidget):
         output_row_label = QLabel("Select the desired output location: ")
         output_row.addWidget(output_row_label)
 
-        output_select_button = QPushButton("Select")
-        output_select_button.clicked.connect(partial(self.select_folder, False))
-        output_row.addWidget(output_select_button)
+        self.output_select_button = QPushButton("Select")
+        self.output_select_button.clicked.connect(partial(self.select_folder, False))
+        output_row.addWidget(self.output_select_button)
 
         # Output chosen row
         output_chosen_row = QHBoxLayout()
         output_chosen_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
         vertical_layout.addLayout(output_chosen_row)
 
-        self.output_chosen_row_label = QLabel("---")
+        self.output_chosen_row_label = QLabel("[None Selected]")
         self.output_chosen_row_label.setProperty("class", "directory-path")
         output_chosen_row.addWidget(self.output_chosen_row_label)
 
@@ -128,6 +129,15 @@ class CentralWidget(QWidget):
         caption = "Select your Splice directory" if is_splice_dir else "Select the desired output directory"
         directory = str(QFileDialog.getExistingDirectory(self, caption))
 
+        if not directory:
+            if is_splice_dir:
+                self.splice_chosen_row_label.setText("[None Selected]")
+                self.splice_dir = None
+            else:
+                self.output_chosen_row_label.setText("[None Selected]")
+                self.output_dir = None
+            return
+
         if is_splice_dir:
             self.splice_dir = directory
             self.splice_chosen_row_label.setText(self.splice_dir)
@@ -145,6 +155,7 @@ class CentralWidget(QWidget):
 
             self.progress_bar.setValue(0)
             self.has_run = False
+            self.output_select_button.setDisabled(False)
             self.submit_button.setText("Submit")
         else:
             if not self.splice_dir or not self.output_dir:
@@ -191,6 +202,8 @@ class CentralWidget(QWidget):
             self.has_run = True
             self.progress_bar.setValue(100)
             self.submit_button.setText("Reset")
+            self.output_select_button.setDisabled(True)
+            QMessageBox.information(self, "Files Exist", "All files already exist.")
             return
 
         # Copy each valid file and update the progress bar
@@ -208,3 +221,5 @@ class CentralWidget(QWidget):
         print("Done copying!")
         self.has_run = True
         self.submit_button.setText("Reset")
+        self.output_select_button.setDisabled(True)
+        QMessageBox.information(self, "Complete", "Copying complete!")
