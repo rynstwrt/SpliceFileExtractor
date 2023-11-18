@@ -4,6 +4,9 @@ from PyQt6.QtCore import Qt
 from functools import partial
 from pathlib import Path
 from warning_dialog import WarningDialog
+from shutil import copy
+from os import walk
+from os.path import join, basename
 
 
 class CentralWidget(QWidget):
@@ -14,7 +17,8 @@ class CentralWidget(QWidget):
         self.geometry = geometry
 
         self.splice_dir = None
-        self.output_dir = None
+        # self.output_dir = None
+        self.output_dir = "./output"
         self.isSelectingSpliceFolder = False
 
         splice_path = Path(Path.home()).joinpath("Splice")
@@ -72,10 +76,9 @@ class CentralWidget(QWidget):
         fourth_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
         vertical_layout.addLayout(fourth_row)
 
-        progress_bar = QProgressBar()
-        progress_bar.setMaximumWidth(200)
-        progress_bar.setValue(0)
-        fourth_row.addWidget(progress_bar)
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setMaximumWidth(200)
+        fourth_row.addWidget(self.progress_bar)
 
 
     def select_folder(self, is_splice_dir):
@@ -105,4 +108,38 @@ class CentralWidget(QWidget):
             dialog.exec()
             return
 
-        print("Submitting!")
+        self.copy_files()
+
+
+    def copy_files(self):
+        valid_files_paths = []
+
+        # Find all files without certain extensions.
+        for path, subdirs, files in walk(self.splice_dir):
+            for file_name in files:
+                is_banned = False
+
+                for banned_extension in [".asd", ".aup3", ".splice"]:
+                    if file_name.lower().endswith(banned_extension):
+                        is_banned = True
+                        break
+
+                if is_banned:
+                    continue
+
+                valid_files_paths.append(join(path, file_name))
+
+        # TODO: Remove files that are already in the output folder
+
+
+        # Copy each valid file and update the progress bar
+        num_valid_files = len(valid_files_paths)
+        file_index = 0
+        for file_path in valid_files_paths:
+            print("Copying " + file_path)
+            copy(file_path, join(self.output_dir, basename(file_path)))
+
+            file_index += 1
+
+            percent_complete = int(file_index / num_valid_files * 100)
+            self.progress_bar.setValue(percent_complete)
