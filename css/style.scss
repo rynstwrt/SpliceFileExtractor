@@ -1,0 +1,15 @@
+$background: #171717;
+$faded: gray;
+
+
+QMainWindow
+{
+    background-color: $background;
+}
+
+
+.directory-path
+{
+    color: $faded;
+    margin-bottom: 15px;
+}

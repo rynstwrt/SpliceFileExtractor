@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
                              QLabel, QProgressBar, QFileDialog, QMessageBox)
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFont, QFontDatabase
 from functools import partial
 from pathlib import Path
 from shutil import copy
@@ -8,22 +9,36 @@ from os import walk
 from os.path import join, basename
 
 
+FONT_1_PATH = "./fonts/NotoSansGlagolitic-Regular.ttf"
+FONT_1_SIZE = 13
+
+
 class CentralWidget(QWidget):
 
-    def __init__(self, geometry):
+    def __init__(self):
         super().__init__()
-
-        self.geometry = geometry
 
         self.splice_dir = None
         # self.output_dir = None
         self.output_dir = "./output"
+
+        self.splice_chosen_row_label = None
+        self.output_chosen_row_label = None
         self.progress_bar = None
         self.submit_button = None
-        self.has_run = False
 
-        self.auto_find_splice_folder()
+        self.has_run = False
+        self.font1 = None
+
+        # self.auto_find_splice_folder()
+        self.load_fonts()
         self.init_ui()
+
+
+    def load_fonts(self):
+        font1_id = QFontDatabase.addApplicationFont(str(Path(FONT_1_PATH).absolute()))
+        if font1_id < 0: print("Error loading font 1!")
+        self.font1 = QFont(QFontDatabase.applicationFontFamilies(font1_id)[0], FONT_1_SIZE)
 
 
     def auto_find_splice_folder(self):
@@ -33,53 +48,78 @@ class CentralWidget(QWidget):
 
 
     def init_ui(self):
+        self.setFont(self.font1)
+
         vertical_layout = QVBoxLayout()
-        vertical_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        vertical_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        vertical_layout.setSpacing(0)
+        vertical_layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(vertical_layout)
 
-        # FIRST ROW
-        row1 = QHBoxLayout()
-        row1.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        vertical_layout.addLayout(row1)
+        # Splice input row
+        splice_row = QHBoxLayout()
+        splice_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        vertical_layout.addLayout(splice_row)
 
-        row1_label_text = "Splice folder automatically found at " + str(self.splice_dir) + "!" if self.splice_dir else "Select the location of your Splice folder:"
-        row1_label = QLabel(row1_label_text)
-        row1.addWidget(row1_label)
+        splice_row_label_text = "Splice folder automatically found at " + str(self.splice_dir) + "!" if self.splice_dir else "Select the location of your Splice folder: "
+        splice_row_label = QLabel(splice_row_label_text)
+        if self.splice_dir:
+            splice_row_label.setProperty("class", "directory-path")
+        splice_row.addWidget(splice_row_label)
 
         if not self.splice_dir:
             splice_select_button = QPushButton("Select")
             splice_select_button.clicked.connect(partial(self.select_folder, True))
-            row1.addWidget(splice_select_button)
+            splice_row.addWidget(splice_select_button)
 
-        # SECOND ROW
-        row2 = QHBoxLayout()
-        row2.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        vertical_layout.addLayout(row2)
+            # Splice chosen row
+            splice_chosen_row = QHBoxLayout()
+            splice_chosen_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            vertical_layout.addLayout(splice_chosen_row)
 
-        row2_label = QLabel("Select the desired output location:")
-        row2.addWidget(row2_label)
+            self.splice_chosen_row_label = QLabel("---")
+            self.splice_chosen_row_label.setProperty("class", "directory-path")
+            splice_chosen_row.addWidget(self.splice_chosen_row_label)
+
+        # Output input row
+        output_row = QHBoxLayout()
+        output_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        vertical_layout.addLayout(output_row)
+
+        output_row_label = QLabel("Select the desired output location: ")
+        output_row.addWidget(output_row_label)
 
         output_select_button = QPushButton("Select")
         output_select_button.clicked.connect(partial(self.select_folder, False))
-        row2.addWidget(output_select_button)
+        output_row.addWidget(output_select_button)
 
-        # THIRD ROW
-        row3 = QHBoxLayout()
-        row3.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        vertical_layout.addLayout(row3)
+        # Output chosen row
+        output_chosen_row = QHBoxLayout()
+        output_chosen_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        vertical_layout.addLayout(output_chosen_row)
+
+        self.output_chosen_row_label = QLabel("---")
+        self.output_chosen_row_label.setProperty("class", "directory-path")
+        output_chosen_row.addWidget(self.output_chosen_row_label)
+
+        # Progress bar row
+        progress_bar_row = QHBoxLayout()
+        progress_bar_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        progress_bar_row.setContentsMargins(0, 10, 0, 0)
+        vertical_layout.addLayout(progress_bar_row)
 
         self.progress_bar = QProgressBar()
         self.progress_bar.setMaximumWidth(200)
-        row3.addWidget(self.progress_bar)
+        progress_bar_row.addWidget(self.progress_bar)
 
-        # FOURTH ROW
-        row4 = QHBoxLayout()
-        row4.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        vertical_layout.addLayout(row4)
+        # Submit row
+        submit_row = QHBoxLayout()
+        submit_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        vertical_layout.addLayout(submit_row)
 
         self.submit_button = QPushButton("Submit")
         self.submit_button.clicked.connect(self.submit)
-        row4.addWidget(self.submit_button)
+        submit_row.addWidget(self.submit_button)
 
 
     def select_folder(self, is_splice_dir):
@@ -88,8 +128,10 @@ class CentralWidget(QWidget):
 
         if is_splice_dir:
             self.splice_dir = directory
+            self.splice_chosen_row_label.setText(self.splice_dir)
         else:
             self.output_dir = directory
+            self.output_chosen_row_label.setText(self.output_dir)
 
         dir_type = "Splice" if is_splice_dir else "output"
         print("Selected {} as the {} directory.".format(directory, dir_type))
