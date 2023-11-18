@@ -1,8 +1,9 @@
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
-                             QLabel, QProgressBar, QFileDialog)
+                             QLabel, QProgressBar, QFileDialog, QDialog)
 from PyQt6.QtCore import Qt
 from functools import partial
 from pathlib import Path
+from warning_dialog import WarningDialog
 
 
 class CentralWidget(QWidget):
@@ -91,4 +92,17 @@ class CentralWidget(QWidget):
 
 
     def submit(self):
+        if not self.splice_dir or not self.output_dir:
+            dialog_text = "You did not select the "
+            if not self.splice_dir and not self.output_dir:
+                dialog_text += "Splice and output directories."
+            elif not self.splice_dir:
+                dialog_text += "Splice directory."
+            else:
+                dialog_text += "output directory."
+
+            dialog = WarningDialog(dialog_text)
+            dialog.exec()
+            return
+
         print("Submitting!")
