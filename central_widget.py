@@ -101,7 +101,7 @@ class CentralWidget(QWidget):
             else:
                 dialog_text += "output directory."
 
-            dialog = WarningDialog(dialog_text)
+            dialog = WarningDialog("Error: No folder chosen", dialog_text)
             dialog.exec()
             return
 
