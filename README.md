@@ -1,2 +1,2 @@
-# Splice-File-Extracter
+# Splice-File-Extractor
  Software to extract your local Splice audio files to one place!
