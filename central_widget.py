@@ -106,15 +106,15 @@ class CentralWidget(QWidget):
 
     def submit(self):
         if not self.splice_dir or not self.output_dir:
-            dialog_text = "You did not select the "
+            dialog_text = "You did not select "
             if not self.splice_dir and not self.output_dir:
-                dialog_text += "Splice and output directories."
+                dialog_text += "the Splice and output directories."
             elif not self.splice_dir:
-                dialog_text += "Splice directory."
+                dialog_text += "the Splice directory."
             else:
-                dialog_text += "output directory."
+                dialog_text += "an output directory."
 
-            QMessageBox.critical(self, "Error: No folder chosen", dialog_text, buttons=QMessageBox.StandardButton.Ok)
+            QMessageBox.warning(self, "Error: No folder chosen", dialog_text)
             return
 
         self.copy_files()
