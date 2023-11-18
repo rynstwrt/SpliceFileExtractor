@@ -19,7 +19,8 @@ class CentralWidget(QWidget):
         # self.output_dir = None
         self.output_dir = "./output"
         self.progress_bar = None
-        self.reset_button = None
+        self.submit_button = None
+        self.has_run = False
 
         self.auto_find_splice_folder()
         self.init_ui()
@@ -37,58 +38,48 @@ class CentralWidget(QWidget):
         self.setLayout(vertical_layout)
 
         # FIRST ROW
-        first_row = QHBoxLayout()
-        first_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        vertical_layout.addLayout(first_row)
+        row1 = QHBoxLayout()
+        row1.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        vertical_layout.addLayout(row1)
 
-        first_row_label_text = "Splice folder automatically found at " + str(self.splice_dir) + "!" if self.splice_dir else "Select the location of your Splice folder:"
-        first_row_label = QLabel(first_row_label_text)
-        first_row.addWidget(first_row_label)
+        row1_label_text = "Splice folder automatically found at " + str(self.splice_dir) + "!" if self.splice_dir else "Select the location of your Splice folder:"
+        row1_label = QLabel(row1_label_text)
+        row1.addWidget(row1_label)
 
         if not self.splice_dir:
             splice_select_button = QPushButton("Select")
             splice_select_button.clicked.connect(partial(self.select_folder, True))
-            first_row.addWidget(splice_select_button)
+            row1.addWidget(splice_select_button)
 
         # SECOND ROW
-        second_row = QHBoxLayout()
-        second_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        vertical_layout.addLayout(second_row)
+        row2 = QHBoxLayout()
+        row2.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        vertical_layout.addLayout(row2)
 
-        second_row_label = QLabel("Select the desired output location:")
-        second_row.addWidget(second_row_label)
+        row2_label = QLabel("Select the desired output location:")
+        row2.addWidget(row2_label)
 
         output_select_button = QPushButton("Select")
         output_select_button.clicked.connect(partial(self.select_folder, False))
-        second_row.addWidget(output_select_button)
+        row2.addWidget(output_select_button)
 
         # THIRD ROW
-        third_row = QHBoxLayout()
-        third_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        vertical_layout.addLayout(third_row)
-
-        submit_button = QPushButton("Submit")
-        submit_button.clicked.connect(self.submit)
-        third_row.addWidget(submit_button)
-
-        # FOURTH ROW
-        fourth_row = QHBoxLayout()
-        fourth_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        vertical_layout.addLayout(fourth_row)
+        row3 = QHBoxLayout()
+        row3.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        vertical_layout.addLayout(row3)
 
         self.progress_bar = QProgressBar()
         self.progress_bar.setMaximumWidth(200)
-        fourth_row.addWidget(self.progress_bar)
+        row3.addWidget(self.progress_bar)
 
-        # FIFTH ROW
-        fifth_row = QHBoxLayout()
-        fifth_row.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        vertical_layout.addLayout(fifth_row)
+        # FOURTH ROW
+        row4 = QHBoxLayout()
+        row4.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        vertical_layout.addLayout(row4)
 
-        self.reset_button = QPushButton("Reset")
-        self.reset_button.clicked.connect(self.reset)
-        self.reset_button.hide()
-        fifth_row.addWidget(self.reset_button)
+        self.submit_button = QPushButton("Submit")
+        self.submit_button.clicked.connect(self.submit)
+        row4.addWidget(self.submit_button)
 
 
     def select_folder(self, is_splice_dir):
@@ -105,19 +96,30 @@ class CentralWidget(QWidget):
 
 
     def submit(self):
-        if not self.splice_dir or not self.output_dir:
-            dialog_text = "You did not select "
-            if not self.splice_dir and not self.output_dir:
-                dialog_text += "the Splice and output directories."
-            elif not self.splice_dir:
-                dialog_text += "the Splice directory."
-            else:
-                dialog_text += "an output directory."
+        if self.has_run:
+            print("Resetting!")
 
-            QMessageBox.warning(self, "Error: No folder chosen", dialog_text)
-            return
+            self.splice_dir = None
+            self.output_dir = None
+            self.progress_bar.setValue(0)
 
-        self.copy_files()
+            self.has_run = False
+            self.auto_find_splice_folder()
+            self.submit_button.setText("Submit")
+        else:
+            if not self.splice_dir or not self.output_dir:
+                dialog_text = "You did not select "
+                if not self.splice_dir and not self.output_dir:
+                    dialog_text += "the Splice and output directories."
+                elif not self.splice_dir:
+                    dialog_text += "the Splice directory."
+                else:
+                    dialog_text += "an output directory."
+
+                QMessageBox.warning(self, "Error: No folder chosen", dialog_text)
+                return
+
+            self.copy_files()
 
 
     def copy_files(self):
@@ -146,8 +148,9 @@ class CentralWidget(QWidget):
 
         if not valid_file_paths:
             print("No files needed to be copied.")
+            self.has_run = True
             self.progress_bar.setValue(100)
-            self.reset_button.show()
+            self.submit_button.setText("Reset")
             return
 
         # Copy each valid file and update the progress bar
@@ -163,15 +166,5 @@ class CentralWidget(QWidget):
             self.progress_bar.setValue(percent_complete)
 
         print("Done copying!")
-        self.reset_button.show()
-
-
-    def reset(self):
-        print("Resetting!")
-
-        self.splice_dir = None
-        self.output_dir = None
-        self.progress_bar.setValue(0)
-
-        self.auto_find_splice_folder()
-        self.reset_button.hide()
+        self.has_run = True
+        self.submit_button.setText("Reset")
