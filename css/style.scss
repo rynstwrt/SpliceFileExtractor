@@ -1,0 +1,125 @@
+$background: #1F2123;
+$accent: #FFA03E;
+$text: #b0b0b0;
+$path: #7a7777;
+$disabled: darken($path, 15%);
+
+
+@font-face
+{
+    font-family: "Roboto Regular";
+    font-weight: 400;
+    src: url("../assets/fonts/Roboto-Regular.ttf") format("truetype");
+}
+
+
+@font-face
+{
+    font-family: "Roboto Black";
+    font-weight: 900;
+    src: url("../assets/fonts/Roboto-Black.ttf") format("truetype");
+}
+
+
+*
+{
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-sizing: border-box;
+}
+
+
+html, body
+{
+    height: 100%;
+}
+
+
+body
+{
+    background-color: $background;
+    color: $text;
+    font-family: "Roboto Regular", sans-serif;
+    font-size: 14px;
+    //letter-spacing: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+main
+{
+    width: 400px;
+}
+
+
+section.disabled
+{
+    p:not(#auto-found-text)
+    {
+        color: $disabled;
+    }
+
+    button
+    {
+        background-color: $disabled;
+    }
+}
+
+
+section
+{
+    background-color: lighten($background, 5%);
+    padding: 15px;
+    border-radius: 5px;
+}
+
+
+section.folder-select-section
+{
+    margin: 25px 0;
+
+    #auto-found-text
+    {
+        color: $accent;
+        margin-bottom: 10px;
+    }
+
+    .folder-select-row
+    {
+        display: flex;
+        align-items: center;
+        margin-top: 3px;
+
+        p
+        {
+            margin-left: 5px;
+            font-size: 14px;
+            color: $path;
+        }
+
+        button
+        {
+            color: black;
+            font-family: "Roboto Regular", sans-serif;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 13px;
+
+            &:hover
+            {
+                background-color: darken($accent, 3%);
+            }
+        }
+    }
+
+    &:not(.disabled)
+    {
+        button
+        {
+            background-color: $accent;
+        }
+    }
+}

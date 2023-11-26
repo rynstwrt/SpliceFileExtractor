@@ -2,7 +2,7 @@ const { app, BrowserWindow } = require("electron");
 const path = require("path");
 
 
-const DEFAULT_WINDOW_SIZE = [800, 600];
+const DEFAULT_WINDOW_SIZE = [600, 300];
 
 
 function createWindow()
