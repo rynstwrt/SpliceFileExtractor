@@ -22,7 +22,7 @@ function createWindow()
     });
 
     win.removeMenu();
-    win.loadFile("index.html");
+    win.loadFile("src/index.html");
 }
 
 

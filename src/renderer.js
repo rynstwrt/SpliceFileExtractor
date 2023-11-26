@@ -11,9 +11,8 @@ const overwriteCheckbox = document.querySelector("#overwrite-checkbox");
 
 
 let spliceDirectory;
-// let outputDirectory;
-let outputDirectory = "./output";
-
+let outputDirectory;
+// let outputDirectory = "output";
 
 
 for (const button of folderSelectButtons)
