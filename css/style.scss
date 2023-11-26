@@ -25,10 +25,9 @@ QMainWindow
 
 .submit-button
 {
-    background-color: $accent;
+    background-color: darken($accent, 10%);
     border-radius: 5px;
     padding: 5px 15px;
     color: black;
     margin-top: 7px;
-    //max-width: 60px;
 }

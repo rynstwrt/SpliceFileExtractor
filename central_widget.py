@@ -1,13 +1,13 @@
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
                              QLabel, QProgressBar, QFileDialog, QMessageBox,
-                             QSizePolicy, QLayout)
+                             QSizePolicy)
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QFontDatabase
 from functools import partial
 from pathlib import Path
 from shutil import copy
-from os import walk
-from os.path import join, basename
+from os import walk, environ
+from os.path import join, basename, abspath
 
 
 FONT_1_PATH = "assets/fonts/NotoSansGlagolitic-Regular.ttf"
@@ -21,8 +21,8 @@ class CentralWidget(QWidget):
         super().__init__()
 
         self.splice_dir = None
-        # self.output_dir = None
-        self.output_dir = "./output"
+        self.output_dir = None
+        # self.output_dir = "output"
 
         self.splice_select_button = None
         self.output_select_button = None
@@ -49,6 +49,10 @@ class CentralWidget(QWidget):
         splice_path = Path(Path.home()).joinpath("Splice")
         if splice_path.exists():
             self.splice_dir = splice_path
+
+
+    def resource_path(self, relative_path):
+        return join(environ.get("_MEIPASS2", abspath(".")), relative_path)
 
 
     def init_ui(self):
@@ -103,7 +107,6 @@ class CentralWidget(QWidget):
         output_section.addWidget(output_label)
 
         output_input_row = QHBoxLayout()
-        # output_input_row.setAlignment(Qt.AlignmentFlag.AlignBottom)
         output_section.addLayout(output_input_row)
 
         self.output_select_button = QPushButton("Select")
