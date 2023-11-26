@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, Menu } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
 const { homedir } = require("os");
 const { existsSync, lstatSync, copyFileSync } = require("fs");
@@ -22,13 +22,13 @@ function createWindow()
     });
 
     win.removeMenu();
-    win.loadFile("src/index.html");
+    win.loadFile("index.html");
 }
 
 
 async function selectFolder()
 {
-    const { canceled, filePaths } = await dialog.showOpenDialog({ properties: ["openDirectory"] });
+    const { canceled, filePaths } = await dialog.showOpenDialog({ defaultPath: __dirname, properties: ["openDirectory"] });
     return { canceled: canceled, folderPath: filePaths[0] };
 }
 
