@@ -12,12 +12,12 @@
 </head>
 <body>
     <main>
-        <section class="folder-select-section disabled">
+        <section id="splice-section" class="folder-select-section">
             <p id="auto-found-text">* Splice folder automatically found!</p>
             <p>Select the location of your Splice folder:</p>
-            <div class="folder-select-row disabled">
+            <div class="folder-select-row">
                 <button id="splice-folder-chooser-button">Select</button>
-                <p id="splice-folder-path-text">/home/bash/</p>
+                <p id="splice-folder-path-text">[None Selected]</p>
             </div>
         </section>
 
@@ -25,11 +25,15 @@
             <p>Select the output location:</p>
             <div class="folder-select-row">
                 <button id="output-folder-chooser-button">Select</button>
-                <p id="output-folder-path-text">/home/bash/</p>
+                <p id="output-folder-path-text">[None Selected]</p>
             </div>
         </section>
 
-        <button id="submit-button">Submit</button>
+        <section id="submit-section">
+            <label for="progress-bar">0%</label>
+            <progress id="progress-bar" max="100"></progress>
+            <button id="submit-button">Extract Splice files</button>
+        </section>
     </main>
 </body>
 </html>
