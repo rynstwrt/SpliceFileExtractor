@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog, Menu } = require("electron");
 const path = require("path");
 const { homedir } = require("os");
 const { existsSync, lstatSync, copyFileSync } = require("fs");
@@ -15,11 +15,13 @@ function createWindow()
     win = new BrowserWindow({
         width: DEFAULT_WINDOW_SIZE[0],
         height: DEFAULT_WINDOW_SIZE[1],
+        icon: path.join(__dirname, "./assets/icons/icon.icns"),
         webPreferences: {
             preload: path.join(__dirname, "preload.js")
         }
     });
 
+    win.removeMenu();
     win.loadFile("index.html");
 }
 
