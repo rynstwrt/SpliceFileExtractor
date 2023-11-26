@@ -56,10 +56,10 @@ async function copyFiles(event, data)
 
         const fileName = path.basename(childPath);
         const match = fileName.match(/.+(\..+)/);
-        if (!match) continue;
+        if (!match || !match[1]) continue;
 
-        const fileExtension = match[0];
-        if (BANNED_FILE_EXTENSIONS.includes(fileExtension)) continue;
+        const fileExtension = match[1];
+        if (BANNED_FILE_EXTENSIONS.includes(fileExtension.toLowerCase())) continue;
 
         const outputFilePath = path.join(outputDir, fileName);
         if (existsSync(outputFilePath) && !overwrite) continue;
