@@ -76,7 +76,8 @@ async function copyFiles(event, data)
         console.log("Copying", filePath);
         copyFileSync(filePath, outputFilePath);
 
-        const percent = Math.ceil(i / numValidFiles * 100);
+        let percent = Math.ceil(i / numValidFiles * 100);
+        if (i === numValidFiles - 1) percent = 100;
         win.webContents.send("setProgress", percent);
     }
 }
