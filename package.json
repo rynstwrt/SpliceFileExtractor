@@ -1,0 +1,28 @@
+{
+  "name": "splice-file-extracter",
+  "version": "1.0.0",
+  "description": "Software to extract your local Splice audio files to one place!",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rynstwrt/SpliceFileExtractor.git"
+  },
+  "keywords": [
+    "splice",
+    "audio",
+    "music",
+    "production"
+  ],
+  "author": "Ryan Stewart",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rynstwrt/SpliceFileExtractor/issues"
+  },
+  "homepage": "https://github.com/rynstwrt/SpliceFileExtractor#readme",
+  "devDependencies": {
+    "electron": "^27.1.2"
+  }
+}
