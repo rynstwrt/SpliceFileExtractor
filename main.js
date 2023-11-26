@@ -1,12 +1,12 @@
 const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
 const { homedir } = require("os");
-const { existsSync, lstatSync } = require("fs");
+const { existsSync, lstatSync, copyFileSync } = require("fs");
 const { readdir } = require("fs/promises");
 
 
 const DEFAULT_WINDOW_SIZE = [600, 400];
-const BANNED_EXTENSIONS = [".asd"];
+const BANNED_FILE_EXTENSIONS = [".asd"];
 let win;
 
 
@@ -20,7 +20,6 @@ function createWindow()
         }
     });
 
-    // win.webContents.toggleDevTools();
     win.loadFile("index.html");
 }
 
@@ -28,7 +27,6 @@ function createWindow()
 async function selectFolder()
 {
     const { canceled, filePaths } = await dialog.showOpenDialog({ properties: ["openDirectory"] });
-    console.log({ canceled: canceled, folderPath: filePaths[0] });
     return { canceled: canceled, folderPath: filePaths[0] };
 }
 
@@ -36,21 +34,18 @@ async function selectFolder()
 async function autoFindSpliceFolder()
 {
     const attemptedPath = path.join(homedir(), "Splice");
-
-    if (!existsSync(attemptedPath)) return false;
-
-    return attemptedPath;
+    return existsSync(attemptedPath) ? attemptedPath : false;
 }
 
 
-async function copyFiles(event, directories)
+async function copyFiles(event, data)
 {
-    const spliceDir = directories.spliceDirectory;
-    const outputDir = directories.outputDirectory;
+    const overwrite = data.overwrite;
+    const spliceDir = data.spliceDirectory;
+    const outputDir = data.outputDirectory;
 
     const allFilesAndDirectories = await readdir(spliceDir, { recursive: true });
-    // const allFiles = allFilesAndDirectories.filter(child => lstatSync(path.join(spliceDir, child)).isFile());
-    // const validFiles = allFiles.filter(file => )
+
     const validFilePaths = [];
     for (const childPath of allFilesAndDirectories)
     {
@@ -62,22 +57,24 @@ async function copyFiles(event, directories)
         if (!match) continue;
 
         const fileExtension = match[0];
-        if (BANNED_EXTENSIONS.includes(fileExtension)) continue;
+        if (BANNED_FILE_EXTENSIONS.includes(fileExtension)) continue;
 
-        validFilePaths.push(childPath)
+        const outputFilePath = path.join(outputDir, fileName);
+        if (existsSync(outputFilePath) && !overwrite) continue;
+
+        validFilePaths.push(absolutePath)
     }
 
     const numValidFiles = validFilePaths.length;
     for (let i = 0; i < numValidFiles; ++i)
     {
-        const filePath = numValidFiles[i];
-        console.log(filePath);
+        const filePath = validFilePaths[i];
+        const outputFilePath = path.join(outputDir, path.basename(filePath));
 
-        // TODO: copy
+        console.log("Copying", filePath);
+        copyFileSync(filePath, outputFilePath);
 
         const percent = Math.ceil(i / numValidFiles * 100);
-        console.log(percent)
-
         win.webContents.send("setProgress", percent);
     }
 }

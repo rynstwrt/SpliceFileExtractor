@@ -99,6 +99,15 @@ section#submit-section #progress-bar::-webkit-progress-bar {
 section#submit-section #progress-bar::-webkit-progress-value {
   background-color: #FFA03E;
 }
+section#submit-section #overwrite-row {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+section#submit-section #overwrite-row input[type=checkbox] {
+  margin-left: 5px;
+  accent-color: #FFA03E;
+}
 section#submit-section #submit-button {
   background-color: transparent;
   border: 1px solid #FFA03E;

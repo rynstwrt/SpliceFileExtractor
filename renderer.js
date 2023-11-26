@@ -7,11 +7,12 @@ const autoFindSpliceFolderText = document.querySelector("#auto-found-text");
 const spliceSection = document.querySelector("section#splice-section");
 const progressBarLabel = document.querySelector("label[for='progress-bar']");
 const progressBar = document.querySelector("#progress-bar");
+const overwriteCheckbox = document.querySelector("#overwrite-checkbox");
 
 
 let spliceDirectory;
-let outputDirectory;
-// let outputDirectory = "./output";
+// let outputDirectory;
+let outputDirectory = "./output";
 
 
 
@@ -66,10 +67,9 @@ submitButton.addEventListener("click", () =>
 {
     if (!spliceDirectory || !outputDirectory)
     {
-        // TODO: error
         window.electronAPI.showErrorBox("The Splice and/or output directory was not set.");
         return;
     }
 
-    window.electronAPI.copyFiles({ spliceDirectory: spliceDirectory, outputDirectory: outputDirectory });
+    window.electronAPI.copyFiles({ overwrite: overwriteCheckbox.checked, spliceDirectory: spliceDirectory, outputDirectory: outputDirectory });
 });

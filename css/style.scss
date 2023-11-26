@@ -158,6 +158,19 @@ section#submit-section
         }
     }
 
+    #overwrite-row
+    {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+
+        input[type=checkbox]
+        {
+            margin-left: 5px;
+            accent-color: $accent;
+        }
+    }
+
     #submit-button
     {
         background-color: transparent;
