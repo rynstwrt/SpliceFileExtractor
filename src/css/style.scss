@@ -1,0 +1,191 @@
+$background: #1F2123;
+$accent: #FFA03E;
+$text: #b0b0b0;
+$path: #7a7777;
+$disabled: darken($path, 15%);
+
+
+@font-face
+{
+    font-family: "Roboto Regular";
+    font-weight: 400;
+    src: url("../assets/fonts/Roboto-Regular.ttf") format("truetype");
+}
+
+
+@font-face
+{
+    font-family: "Roboto Black";
+    font-weight: 900;
+    src: url("../assets/fonts/Roboto-Black.ttf") format("truetype");
+}
+
+
+*
+{
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-sizing: border-box;
+}
+
+
+html, body
+{
+    height: 100%;
+}
+
+
+body
+{
+    background-color: $background;
+    color: $text;
+    font-family: "Roboto Regular", sans-serif;
+    font-size: 14px;
+    //letter-spacing: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+main
+{
+    //width: 400px;
+    width: 100%;
+    max-width: 750px;
+    padding: 0 30px;
+}
+
+
+section.disabled
+{
+    p:not(#auto-found-text)
+    {
+        color: $disabled;
+    }
+
+    button
+    {
+        background-color: $disabled;
+    }
+}
+
+
+section
+{
+    background-color: lighten($background, 5%);
+    padding: 15px;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+
+section.folder-select-section
+{
+    #auto-found-text
+    {
+        color: $accent;
+        margin-bottom: 10px;
+        display: none;
+    }
+
+    .folder-select-row
+    {
+        display: flex;
+        align-items: center;
+        margin-top: 3px;
+
+        p
+        {
+            margin-left: 5px;
+            font-size: 14px;
+            color: $path;
+        }
+
+        button
+        {
+            color: black;
+            font-family: "Roboto Regular", sans-serif;
+            padding: 2px 10px;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+    }
+
+    &:not(.disabled)
+    {
+        button
+        {
+            background-color: $accent;
+
+            &:hover
+            {
+                background-color: darken($accent, 3%);
+            }
+        }
+    }
+}
+
+
+section#submit-section
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    label
+    {
+        margin-bottom: 3px;
+    }
+
+    #progress-bar
+    {
+        width: 300px;
+        height: 7px;
+        border-radius: 10px;
+        overflow: hidden;
+
+        &::-webkit-progress-bar
+        {
+            background-color: $background;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+        }
+
+        &::-webkit-progress-value
+        {
+            background-color: $accent;
+        }
+    }
+
+    #overwrite-row
+    {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+
+        input[type=checkbox]
+        {
+            margin-left: 5px;
+            accent-color: $accent;
+        }
+    }
+
+    #submit-button
+    {
+        background-color: transparent;
+        border: 1px solid $accent;
+        color: $accent;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 14px;
+        margin-top: 10px;
+        letter-spacing: 1px;
+
+        &:hover
+        {
+            background-color: $accent;
+            color: black;
+        }
+    }
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Splice File Extractor</title>
+
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+
+    <script src="./renderer.js" defer></script>
+</head>
+<body>
+    <main>
+        <section id="splice-section" class="folder-select-section">
+            <p id="auto-found-text">* Splice folder automatically found!</p>
+            <p>Select the location of your Splice folder:</p>
+            <div class="folder-select-row">
+                <button id="splice-folder-chooser-button">Select</button>
+                <p id="splice-folder-path-text">[None Selected]</p>
+            </div>
+        </section>
+
+        <section class="folder-select-section">
+            <p>Select the output location:</p>
+            <div class="folder-select-row">
+                <button id="output-folder-chooser-button">Select</button>
+                <p id="output-folder-path-text">[None Selected]</p>
+            </div>
+        </section>
+
+        <section id="submit-section">
+            <label for="progress-bar">0%</label>
+            <progress id="progress-bar" max="100"></progress>
+            <div id="overwrite-row">
+                <label for="overwrite-checkbox">Overwrite files if they already exist:</label>
+                <input id="overwrite-checkbox" type="checkbox" checked="checked">
+            </div>
+            <button id="submit-button">Extract Splice files</button>
+        </section>
+    </main>
+</body>
+</html>

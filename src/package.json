@@ -1,0 +1,31 @@
+{
+  "name": "splice-file-extracter",
+  "version": "1.0.0",
+  "description": "Software to extract your saved Splice audio files to one place!\n",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build-apple-silicon": "npx electron-packager . 'Splice File Extractor' --overwrite --platform=darwin --arch=arm64 --prune=true --icon=assets/icons/icon.icns --out=../build",
+    "build-windows": "npx electron-packager . 'Splice File Extractor' --overwrite --asar --platform=win32 --arch=ia32 --icon=assets/icons/icon.ico --prune=true --out=../build --version-string.ProductName='Splice File Extractor'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rynstwrt/SpliceFileExtractor.git"
+  },
+  "keywords": [
+    "splice",
+    "audio",
+    "music",
+    "production"
+  ],
+  "author": "Ryan Stewart",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rynstwrt/SpliceFileExtractor/issues"
+  },
+  "homepage": "https://github.com/rynstwrt/SpliceFileExtractor#readme",
+  "devDependencies": {
+    "electron": "^27.1.2",
+    "electron-packager": "^17.1.2"
+  }
+}
