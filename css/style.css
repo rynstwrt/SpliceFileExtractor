@@ -77,4 +77,13 @@ section.folder-select-section:not(.disabled) button {
   background-color: #FFA03E;
 }
 
+#submit-button {
+  background-color: transparent;
+  border: 1px solid #FFA03E;
+  color: #FFA03E;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 15px;
+}
+
 /*# sourceMappingURL=style.css.map */

@@ -25,12 +25,14 @@ app.whenReady().then(() =>
 {
     ipcMain.handle("selectFolder", async () =>
     {
-        console.log("select");
-
         const { canceled, filePaths } = await dialog.showOpenDialog({ properties: ["openDirectory"] });
-
-        console.log({ canceled: canceled, folderPath: filePaths[0] })
+        console.log({ canceled: canceled, folderPath: filePaths[0] });
         return { canceled: canceled, folderPath: filePaths[0] };
+    });
+
+    ipcMain.handle("copyFiles", async (event, directories) =>
+    {
+        console.log(directories)
     });
 
     createWindow();

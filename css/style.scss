@@ -123,3 +123,14 @@ section.folder-select-section
         }
     }
 }
+
+
+#submit-button
+{
+    background-color: transparent;
+    border: 1px solid $accent;
+    color: $accent;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 15px;
+}

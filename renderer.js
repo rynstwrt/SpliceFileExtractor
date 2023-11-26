@@ -42,4 +42,6 @@ submitButton.addEventListener("click", () =>
         // TODO: error
         return;
     }
+
+    window.electronAPI.copyFiles({ spliceDirectory: spliceDirectory, outputDirectory: outputDirectory });
 });
